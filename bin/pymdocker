@@ -6,7 +6,6 @@ ARGS=$@
 
 VERSION=
 DO_PUSH=
-DO_BASE=
 DO_BUILD=1
 DO_DEBUG=
 
@@ -51,7 +50,6 @@ parse_args() {
             "--debug")        export DO_DEBUG=1; set -x;;
             "--no-build")     export DO_BUILD=;;
             "--push")         export DO_PUSH=1;;
-            "--base")         export DO_BASE=1;;
             "-h" | "--help")  usage; exit 0;;
             *)                echo "Unknown argument '$1' (-h for help)"; exit 0;;
         esac
