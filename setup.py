@@ -50,8 +50,8 @@ setup(
         'pep8'
     ],
     test_suite='nose.collector',
-    packages=['pymacaron_deploy_configs'],
-    package_data={'pymacaron_deploy_configs': ['*.template']},
+    packages=['pymacaron_docker'],
+    package_data={'pymacaron_docker': ['*.template']},
     scripts=glob("bin/*"),
     zip_safe=False,
     platforms='any',
