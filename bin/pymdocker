@@ -73,8 +73,8 @@ fi
 # Load configuration
 #
 
-PROJECT_NAME=$(pym_config --name)
-DOCKER_ROOT_REPO=$(pym_config --docker-repo)
+PROJECT_NAME=$(pymconfig --name)
+DOCKER_ROOT_REPO=$(pymconfig --docker-repo)
 DOCKER_REPO=$DOCKER_ROOT_REPO/$PROJECT_NAME
 
 #
@@ -93,7 +93,7 @@ check_git_clean() {
 
 check_git_clean
 
-for LINK in $(pym_config --include-links)
+for LINK in $(pymconfig --include-links)
 do
     check_git_clean $LINK
 done
@@ -117,7 +117,7 @@ fi
 if [ ! -z "$DO_BUILD" ]; then
     echo "=> Building Docker image for project $PROJECT_NAME, version $VERSION"
     CELERY_CMD=''
-    DO_ASYNC=$(pym_config --with-async)
+    DO_ASYNC=$(pymconfig --with-async)
     if [ ! -z "$DO_ASYNC" ]; then
         echo "=> Including celery workers to image"
         CELERY_CMD=$(python -c 'import pymacaron_async; print(pymacaron_async.get_celery_cmd(False))' | tail -n 1)
@@ -132,7 +132,7 @@ if [ ! -z "$DO_BUILD" ]; then
         tar -rf docker/macaron.tar apis/*.yaml
     fi
 
-    for LINK in $(pym_config --include-links)
+    for LINK in $(pymconfig --include-links)
     do
         tar --dereference \
             -rf docker/macaron.tar \
