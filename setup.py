@@ -38,13 +38,8 @@ setup(
     author='Erwan Lemonnier',
     author_email='erwan@lemonnier.se',
     description='Package a PyMacaron microservice into a Docker image',
-    install_requires=[
-        'awsebcli==3.0.5',
-        'awscli',
-    ],
+    install_requires=[],
     tests_require=[
-        'awsebcli==3.12.1',
-        'awscli',
         'nose',
         'mock',
         'pep8'
