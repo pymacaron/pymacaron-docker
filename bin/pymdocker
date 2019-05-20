@@ -166,9 +166,14 @@ if [ ! -z "$DO_BUILD" ]; then
     if [ ! -e '.pym' ]; then
         mkdir .pym
     fi
+
     FILE_IMAGE_ID=.pym/last_docker_image_id
     echo "=> Saving image version to $FILE_IMAGE_ID"
     echo "${DOCKER_REPO}:${VERSION}" > $FILE_IMAGE_ID
+
+    FILE_VERSION=.pym/last_version
+    echo "=> Saving version to $FILE_VERSION"
+    echo $VERSION > $FILE_VERSION
 
     echo "=> Cleaning up"
     rm docker/Dockerfile
