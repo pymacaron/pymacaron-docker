@@ -162,8 +162,6 @@ if [ ! -z "$DO_BUILD" ]; then
         sed -i -e '/<EXTRA_DOCKERFILE>/r Dockerfile.extra' docker/Dockerfile > docker/Dockerfile.tmp
     fi
 
-    exit 0
-
     # Remove image if it already exists
     # TODO: make the cleanup optional, so it can be skipped if no changes to project files
     IMAGE_ID=$(docker images --quiet ${DOCKER_REPO}:${VERSION})
