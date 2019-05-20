@@ -19,6 +19,9 @@ running pymdocker must have logged in to the docker reporitofy with 'docker
 login'. The name of the project and of the docker repository are extracted from
 the project's pym-config.
 
+If the project contains the file 'Dockerfile.extra', its content will be added
+into the docker file used to generate the docker image.
+
 The ID of the generated Docker image is saved in the file
 '.pym/last_docker_image_id'.
 
@@ -110,6 +113,8 @@ if [ ! -e "$DOCKERFILE_TEMPLATE" ]; then
     exit 1
 fi
 
+EXTRA_DOCKERFILE='./Dockerfile.extra'
+
 #
 # All set! Let's build!
 #
@@ -151,6 +156,13 @@ if [ ! -z "$DO_BUILD" ]; then
         | sed -e "s|<VERSION>|$VERSION|" \
         | sed -e "s|<START_CELERY>|$CELERY_CMD|" \
         > docker/Dockerfile
+
+    if [ -f $EXTRA_DOCKERFILE ]; then
+        echo "=> Adding Dockerfile.extra to docker/Dockerfile"
+        sed -i -e '/<EXTRA_DOCKERFILE>/r Dockerfile.extra' docker/Dockerfile > docker/Dockerfile.tmp
+    fi
+
+    exit 0
 
     # Remove image if it already exists
     # TODO: make the cleanup optional, so it can be skipped if no changes to project files
