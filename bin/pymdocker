@@ -77,6 +77,7 @@ fi
 #
 
 PROJECT_NAME=$(pymconfig --name)
+DOCKER_BASE=$(pymconfig --docker-base)
 DOCKER_ROOT_REPO=$(pymconfig --docker-repo)
 DOCKER_REPO=$DOCKER_ROOT_REPO/$PROJECT_NAME
 
@@ -156,6 +157,11 @@ if [ ! -z "$DO_BUILD" ]; then
         | sed -e "s|<VERSION>|$VERSION|" \
         | sed -e "s|<START_CELERY>|$CELERY_CMD|" \
         > docker/Dockerfile
+
+    if [ ! -z "$DOCKER_BASE" ]; then
+        echo "=> Using custom Docker base image $DOCKER_BASE"
+        sed -i "/FROM /c\FROM ${DOCKER_BASE}" docker/Dockerfile
+    fi
 
     if [ -f $EXTRA_DOCKERFILE ]; then
         echo "=> Adding Dockerfile.extra to docker/Dockerfile"
