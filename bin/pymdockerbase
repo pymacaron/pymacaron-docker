@@ -7,6 +7,7 @@ ARGS=$@
 DOCKER_REPO=pymacaron/base
 DO_DEBUG=
 DO_PUSH=
+DOCKERFILE=$(pymdockerpath)/Dockerfile.base.template
 
 usage() {
     cat << EOF
@@ -17,13 +18,18 @@ base image repository. For use only by admins of the PyMacaron docker
 repository.
 
 OPTIONS:
-  --push       Push the generated docker image to he docker repository specified
-  --debug      Run with extra verbosity
-  --help       Show this help
+  --push        Push the generated docker image to he docker repository specified
+  --debug       Run with extra verbosity
+  --dockerfile  Alternate base dockerfile to use
+  --registry    Alternate docker registry to push to
+  --help        Show this help
 
 EXAMPLES:
   # Build and push a new base image
   pymdockerbase --push
+
+  # Build and push the pymacaron scraper base image
+  pymdockerbase --push --dockerfile Dockerfile.scraper.base --registry pymacaron/scraper
 
 EOF
 }
@@ -34,6 +40,8 @@ parse_args() {
         case $1 in
             "--debug")        export DO_DEBUG=1; set -x;;
             "--push")         export DO_PUSH=1;;
+            "--dockerfile")   shift; export DOCKERFILE=$1;;
+            "--registry")     shift; export DOCKER_REPO=$1;;
             "-h" | "--help")  usage; exit 0;;
             *)                echo "Unknown argument '$1' (-h for help)"; exit 0;;
         esac
@@ -59,9 +67,8 @@ if [ "$PWD" != "$ROOTDIR" ]; then
     exit 1
 fi
 
-DOCKERFILE_TEMPLATE=$(bin/pymdockerpath)/Dockerfile.base.template
-if [ ! -e "$DOCKERFILE_TEMPLATE" ]; then
-    echo "ERROR: cannot find $DOCKERFILE_TEMPLATE"
+if [ ! -e "$DOCKERFILE" ]; then
+    echo "ERROR: cannot find $DOCKERFILE"
     exit 1
 fi
 
@@ -81,9 +88,12 @@ EOF
 echo "=> Generating docker/Dockerfile"
 
 cp requirements.txt docker/
-cat $DOCKERFILE_TEMPLATE \
+cat $DOCKERFILE \
     | sed -e "s/<VERSION>/$VERSION/" \
     > docker/Dockerfile
+
+echo "=> About to compile Dockerfile:"
+cat docker/Dockerfile
 
 # Remove image if it already exists
 # TODO: make the cleanup optional, so it can be skipped if no changes to project files
