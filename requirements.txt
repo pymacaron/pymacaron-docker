@@ -4,3 +4,4 @@ nose
 requests
 click
 pycurl
+gunicorn
