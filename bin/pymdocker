@@ -9,15 +9,19 @@ DO_PUSH=
 DO_BUILD=1
 DO_DEBUG=
 
+# The default registry to push to
+REGISTRY=docker.io
+
 usage() {
     cat << EOF
 USAGE: pymdocker [--debug] [--no-build] [--push] --version N
 
 Package a PyMacaron microservice into a Docker image and pushes that image to a
-Docker repository. Must be run from the root of a PyMacaron directory. The user
-running pymdocker must have logged in to the docker reporitofy with 'docker
-login'. The name of the project and of the docker repository are extracted from
-the project's pym-config.
+container repository. Must be run from the root of a PyMacaron directory. The
+user running pymdocker must have logged in to the docker reporitofy with for
+example 'docker login' or 'gcloud auth configure-docker'. The name of the
+project and of the docker repository are extracted from the project's
+pym-config.
 
 If the project contains the file 'Dockerfile.extra', its content will be added
 into the docker file used to generate the docker image.
@@ -26,15 +30,16 @@ The ID of the generated Docker image is saved in the file
 '.pym/last_docker_image_id'.
 
 OPTIONS:
-  --version N  The version of the docker image to generate (mandatory)
-  --no-build   Don't build the image
-  --push       Push the generated docker image to he docker repository specified
-  --debug      Run with extra verbosity
-  --help       Show this help
+  --version N   The version of the docker image to generate (mandatory)
+  --no-build    Don't build the image
+  --push        Push the generated docker image to he docker repository specified
+  --debug       Run with extra verbosity
+  --registry R  Override the default registry to push to (docker.io)
+  --help        Show this help
 
 EXAMPLES:
-  # Build and push version 0.0.1
-  pymdocker --version 0.0.1 --push
+  # Build and push version 0.0.1 to google registry
+  pymdocker --version 0.0.1 --push --registry gcr.io
 
   # Build 0.0.1 but don't push
   pymdocker --version 0.0.1
@@ -53,6 +58,7 @@ parse_args() {
             "--debug")        export DO_DEBUG=1; set -x;;
             "--no-build")     export DO_BUILD=;;
             "--push")         export DO_PUSH=1;;
+            "--registry")     shift; REGISTRY=$1;;
             "-h" | "--help")  usage; exit 0;;
             *)                echo "Unknown argument '$1' (-h for help)"; exit 0;;
         esac
@@ -116,6 +122,11 @@ fi
 
 EXTRA_DOCKERFILE='./Dockerfile.extra'
 
+if ! [[ "$REGISTRY" =~ ^(docker.io|gcr.io)$ ]]; then
+    echo "ERROR: don't know how to push to registry $REGISTRY"
+    exit 1
+fi
+
 #
 # All set! Let's build!
 #
@@ -177,7 +188,7 @@ if [ ! -z "$DO_BUILD" ]; then
     fi
 
     echo "=> Building docker image"
-    docker build -t ${DOCKER_REPO}:${VERSION} --rm docker
+    docker build -t ${DOCKER_REPO}:${VERSION} -t gcr.io/${DOCKER_REPO}:${VERSION} --rm docker
 
     if [ ! -e '.pym' ]; then
         mkdir .pym
@@ -212,7 +223,8 @@ if [ ! -z "$DO_PUSH" ]; then
     fi
 
     echo "=> Pushing to registry ${DOCKER_REPO}:${VERSION}"
-    docker push ${DOCKER_REPO}:${VERSION}
+    docker push $REGISTRY/${DOCKER_REPO}:${VERSION}
+
 else
     echo "=> Not pushing docker image to repository"
 fi
