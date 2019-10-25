@@ -1,4 +1,4 @@
-FROM pymacaron/base:191019-1925-21
+FROM pymacaron/base:191025-1811-25
 MAINTAINER Erwan Lemonnier <erwan@lemonnier.se>
 
 # install application
