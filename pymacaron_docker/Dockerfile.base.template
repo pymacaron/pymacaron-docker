@@ -1,4 +1,4 @@
-FROM phusion/baseimage:0.9.18
+FROM pymacaron/base:191025-1832-26
 LABEL "version": "<VERSION>" \
       "description": "pymacaron base image" \
       "maintainer": "Erwan Lemonnier <erwan@lemonnier.se>"
@@ -16,6 +16,6 @@ RUN pip install -U pip virtualenv
 RUN mkdir /pym
 ADD requirements.txt /pym
 RUN echo "<VERSION>" > /pym/BASEVERSION
-RUN virtualenv -p python3 /pym/virtenv
+RUN virtualenv -p python3.5 /pym/virtenv
 RUN /bin/bash -c "source /pym/virtenv/bin/activate; pip install -r /pym/requirements.txt --upgrade"
 RUN rm /pym/requirements.txt
