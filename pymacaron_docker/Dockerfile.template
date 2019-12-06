@@ -1,4 +1,4 @@
-FROM pymacaron/base:191025-1832-26
+FROM pymacaron/base:191206-0647-30
 MAINTAINER Erwan Lemonnier <erwan@lemonnier.se>
 
 # install application
@@ -17,4 +17,4 @@ WORKDIR /pym
 
 ENV LC_ALL=C.UTF-8
 ENV LANG=C.UTF-8
-CMD /bin/bash -c "source /pym/virtenv/bin/activate; /pym/virtenv/bin/pym_monitor; <START_CELERY> gunicorn --bind 0.0.0.0:${PORT} --worker-class 'gevent' --config python:pymacaron.gunicorn server:app"
+CMD /bin/bash -c "source /pym/virtenv/bin/activate; /pym/virtenv/bin/pym_monitor; <START_CELERY> gunicorn --bind 0.0.0.0:${PORT} --worker-class 'gthread' --config python:pymacaron.gunicorn server:app"
