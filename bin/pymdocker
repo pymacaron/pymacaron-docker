@@ -145,6 +145,10 @@ if [ ! -z "$DO_BUILD" ]; then
     mkdir -p docker
     git archive -o docker/macaron.tar HEAD
 
+    # Remove the test folders
+    tar -f docker/macaron.tar --delete test
+    tar -f docker/macaron.tar --delete testaccept
+
     if [ -d 'apis' ]; then
         tar -rf docker/macaron.tar apis/*.yaml
     fi
