@@ -8,6 +8,7 @@ VERSION=
 DO_PUSH=
 DO_BUILD=1
 DO_DEBUG=
+TARGET_ENV=
 
 # The default registry to push to
 REGISTRY=docker.io
@@ -30,6 +31,7 @@ The ID of the generated Docker image is saved in the file
 '.pym/last_docker_image_id'.
 
 OPTIONS:
+  --env ENV     Build using configuration from 'pym-config.ENV.yaml' (optional)
   --version N   The version of the docker image to generate (mandatory)
   --no-build    Don't build the image
   --push        Push the generated docker image to he docker repository specified
@@ -54,6 +56,7 @@ EOF
 parse_args() {
     while [ "$1" != "" ]; do
         case $1 in
+            "--env")          shift; export TARGET_ENV=$1;;
             "--version")      shift; export VERSION=$1;;
             "--debug")        export DO_DEBUG=1; set -x;;
             "--no-build")     export DO_BUILD=;;
@@ -78,13 +81,18 @@ if [ -z "$VERSION" ]; then
     exit 1
 fi
 
+PYMCONFIG_ARGS=""
+if [ ! -z "$TARGET_ENV" ]; then
+    PYMCONFIG_ARGS="--env $TARGET_ENV"
+fi
+
 #
 # Load configuration
 #
 
-PROJECT_NAME=$(pymconfig --name)
-DOCKER_BASE=$(pymconfig --docker-base)
-DOCKER_ROOT_REPO=$(pymconfig --docker-repo)
+PROJECT_NAME=$(pymconfig $PYMCONFIG_ARGS --name)
+DOCKER_BASE=$(pymconfig $PYMCONFIG_ARGS --docker-base)
+DOCKER_ROOT_REPO=$(pymconfig $PYMCONFIG_ARGS --docker-repo)
 DOCKER_REPO=$DOCKER_ROOT_REPO/$PROJECT_NAME
 
 #
@@ -103,7 +111,7 @@ check_git_clean() {
 
 check_git_clean
 
-for LINK in $(pymconfig --include-links)
+for LINK in $(pymconfig $PYMCONFIG_ARGS --include-links)
 do
     check_git_clean $LINK
 done
@@ -134,7 +142,7 @@ fi
 if [ ! -z "$DO_BUILD" ]; then
     echo "=> Building Docker image for project $PROJECT_NAME, version $VERSION"
     CELERY_CMD=''
-    DO_ASYNC=$(pymconfig --with-async)
+    DO_ASYNC=$(pymconfig $PYMCONFIG_ARGS --with-async)
     if [ ! -z "$DO_ASYNC" ]; then
         echo "=> Including celery workers to image"
         CELERY_CMD=$(python -c 'import pymacaron_async; print(pymacaron_async.get_celery_cmd(debug=False, keep_alive=True))' | tail -n 1)
@@ -153,7 +161,7 @@ if [ ! -z "$DO_BUILD" ]; then
         tar -rf docker/macaron.tar apis/*.yaml
     fi
 
-    for LINK in $(pymconfig --include-links)
+    for LINK in $(pymconfig $PYMCONFIG_ARGS --include-links)
     do
         tar --dereference \
             -rf docker/macaron.tar \
