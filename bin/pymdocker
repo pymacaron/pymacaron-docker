@@ -71,11 +71,6 @@ parse_args() {
 
 parse_args $ARGS
 
-if [ ! -e 'pym-config.yaml' ]; then
-    echo "ERROR: no pym-config.yaml in current dir"
-    exit 1
-fi
-
 if [ -z "$VERSION" ]; then
     echo "ERROR: please set an image version with --version"
     exit 1
@@ -85,6 +80,9 @@ PYMCONFIG_ARGS=""
 if [ ! -z "$TARGET_ENV" ]; then
     PYMCONFIG_ARGS="--env $TARGET_ENV"
 fi
+
+# Check that pymconfig exists
+pymconfig $PYMCONFIG_ARGS
 
 #
 # Load configuration
