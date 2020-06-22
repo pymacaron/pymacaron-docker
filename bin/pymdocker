@@ -143,7 +143,11 @@ if [ ! -z "$DO_BUILD" ]; then
     DO_ASYNC=$(pymconfig $PYMCONFIG_ARGS --with-async)
     if [ ! -z "$DO_ASYNC" ]; then
         echo "=> Including celery workers to image"
-        CELERY_CMD=$(python -c 'import pymacaron_async; print(pymacaron_async.get_celery_cmd(debug=False, keep_alive=True))' | tail -n 1)
+        CELERY_CMD=$(python -c 'import pymacaron_async; print(pymacaron_async.get_celery_cmd(debug=True, keep_alive=True))' | tail -n 1)
+        if [ -z "$CELERY_CMD" ]; then
+            echo "BUG!!! Empty celery command"
+            exit -1
+        fi
         CELERY_CMD="redis-server \& $CELERY_CMD \& "
     fi
 
