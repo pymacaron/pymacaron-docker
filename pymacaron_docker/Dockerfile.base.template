@@ -4,7 +4,7 @@ LABEL "version": "<VERSION>" \
       "maintainer": "Erwan Lemonnier <erwan@lemonnier.se>"
 
 # install dependencies
-RUN apt-get -qq update && apt-get install -y --fix-missing python3.5 python3.5-dev python3-pip python3-setuptools libffi-dev libssl-dev libjpeg8 libjpeg8-dev libopenjpeg-dev libxml2-dev libxslt-dev libcurl4-openssl-dev redis-server=2:2.8.4-2ubuntu0.2 build-essential autoconf libtool pkg-config
+RUN apt-get -qq update && apt-get install -y --fix-missing python3.8 python3.8-dev python3-pip python3-setuptools libffi-dev libssl-dev libjpeg8 libjpeg8-dev libopenjpeg-dev libxml2-dev libxslt-dev libcurl4-openssl-dev redis-server=2:2.8.4-2ubuntu0.2 build-essential autoconf libtool pkg-config
 
 RUN apt-get clean
 RUN rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
@@ -16,6 +16,6 @@ RUN pip install -U pip virtualenv
 RUN mkdir /pym
 ADD requirements.txt /pym
 RUN echo "<VERSION>" > /pym/BASEVERSION
-RUN virtualenv -p python3.5 /pym/virtenv
+RUN virtualenv -p python3.8 /pym/virtenv
 RUN /bin/bash -c "source /pym/virtenv/bin/activate; pip install -r /pym/requirements.txt --upgrade"
 RUN rm /pym/requirements.txt
