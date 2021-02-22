@@ -1,4 +1,4 @@
-FROM phusion/baseimage:0.9.18
+FROM phusion/baseimage:bionic-1.0.0
 LABEL "version": "<VERSION>" \
       "description": "pymacaron base image" \
       "maintainer": "Erwan Lemonnier <erwan@lemonnier.se>"
