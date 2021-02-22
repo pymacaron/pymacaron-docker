@@ -1,5 +1,4 @@
-FROM phusion/baseimage:
-0.11
+FROM phusion/baseimage:0.11
 LABEL "version": "<VERSION>" \
       "description": "pymacaron base image" \
       "maintainer": "Erwan Lemonnier <erwan@lemonnier.se>"
