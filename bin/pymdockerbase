@@ -4,6 +4,8 @@ set -e
 
 ARGS=$@
 
+PATH=$PATH:./bin
+
 DOCKER_REPO=pymacaron/base
 DO_DEBUG=
 DO_PUSH=

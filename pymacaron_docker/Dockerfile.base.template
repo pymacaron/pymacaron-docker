@@ -5,7 +5,7 @@ LABEL "version": "<VERSION>" \
 
 # install dependencies
 RUN apt-get update
-RUN apt-get -qq update && apt-get install -y --fix-missing python3.8 python3.8-dev python-pip python3-pip python3-setuptools libffi-dev libssl-dev libjpeg8 libjpeg8-dev libopenjp2-7-dev libxml2-dev libxslt-dev libcurl4-openssl-dev redis-server build-essential autoconf libtool pkg-config cmake
+RUN apt-get -qq update && apt-get install -y --fix-missing python3.8 python3.8-dev python-pip python3-pip python3-setuptools libffi-dev libssl-dev libjpeg8 libjpeg8-dev libopenjp2-7-dev libxml2-dev libxslt-dev libcurl4-openssl-dev redis-server build-essential autoconf libtool pkg-config cmake git
 
 RUN apt-get clean
 RUN rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
