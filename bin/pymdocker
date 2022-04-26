@@ -139,12 +139,6 @@ fi
 
 if [ ! -z "$DO_BUILD" ]; then
     echo "=> Building Docker image for project $PROJECT_NAME, version $VERSION"
-    CELERY_CMD=''
-    DO_ASYNC=$(pymconfig $PYMCONFIG_ARGS --with-async)
-    if [ ! -z "$DO_ASYNC" ]; then
-        echo "=> Including celery workers to image"
-        CELERY_CMD="redis-server \& pymasync --level debug --keep-alive \& "
-    fi
 
     echo "=> Taring source with git archive"
     mkdir -p docker
@@ -175,7 +169,6 @@ if [ ! -z "$DO_BUILD" ]; then
     echo "=> Generating docker/Dockerfile"
     cat $DOCKERFILE_TEMPLATE \
         | sed -e "s|<VERSION>|$VERSION|" \
-        | sed -e "s|<START_CELERY>|$CELERY_CMD|" \
         > docker/Dockerfile
 
     if [ ! -z "$DOCKER_BASE" ]; then
