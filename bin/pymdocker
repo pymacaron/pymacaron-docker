@@ -114,8 +114,11 @@ do
     check_git_clean $LINK
 done
 
-ROOTDIR=$(git rev-parse --show-toplevel)
-if [ "$PWD" != "$ROOTDIR" ]; then
+# Defensive check: are we in the git clone's dir?
+# NOTE: on osx, a tmp dir may actually be located under /private
+ROOTDIR=$(git rev-parse --show-toplevel | sed -e 's|^\/private||')
+HERE=$(pwd | sed -e 's|^\/private||')
+if [ "$HERE" != "$ROOTDIR" ]; then
     echo "ERROR: current dir is not the clone's root directory"
     exit 1
 fi
@@ -145,6 +148,7 @@ if [ ! -z "$DO_BUILD" ]; then
     git archive -o docker/macaron.tar HEAD
 
     # Remove the test folders
+    # NOTE: on osx, you need to 'brew install gnu-tar' for tar to support --delete
     tar -f docker/macaron.tar --delete test
     tar -f docker/macaron.tar --delete testaccept
 
