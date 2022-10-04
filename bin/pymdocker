@@ -194,7 +194,7 @@ if [ ! -z "$DO_BUILD" ]; then
     fi
 
     echo "=> Building docker image"
-    docker build -t ${DOCKER_REPO}:${VERSION} -t gcr.io/${DOCKER_REPO}:${VERSION} --rm docker
+    docker buildx build --platform linux/amd64 -t ${DOCKER_REPO}:${VERSION} -t gcr.io/${DOCKER_REPO}:${VERSION} --rm docker
 
     if [ ! -e '.pym' ]; then
         mkdir .pym
